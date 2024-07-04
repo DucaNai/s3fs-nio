@@ -428,41 +428,40 @@ public class S3FileChannel
      * @throws IOException If {@link IOException} happens during closing.
      */
     @Override
-    public void close()
-            throws IOException
-    {
+    public void close() throws IOException {
         openCloseLock.lock();
-
-        try
-        {
-            if (isOpen())
-            {
-                fileChannel.force(true);
-                fileChannel.close();
-                if (this.tempFile != null && Files.exists(tempFile))
-                {
-                    if (!this.options.contains(StandardOpenOption.READ))
-                    {
-                        sync();
-                    }
-
-                    Files.delete(tempFile);
-                }
+        try {
+            if (isOpen()) {
+                closeFileChannel();
+                deleteTempFileIfNeeded();
+            } else {
+                logChannelAlreadyClosed();
             }
-            else
-            {
-                if (logger.isDebugEnabled())
-                {
-                    logger.info("Tried to close already closed channel for path {}.", path);
-                }
-            }
-
-        }
-        finally
-        {
+        } finally {
             openCloseLock.unlock();
         }
     }
+
+    private void closeFileChannel() throws IOException {
+        fileChannel.force(true);
+        fileChannel.close();
+    }
+
+    private void deleteTempFileIfNeeded() throws IOException {
+        if (this.tempFile != null && Files.exists(tempFile)) {
+            if (!this.options.contains(StandardOpenOption.READ)) {
+                sync();
+            }
+            Files.delete(tempFile);
+        }
+    }
+
+    private void logChannelAlreadyClosed() {
+        if (logger.isDebugEnabled()) {
+            logger.info("Tried to close already closed channel for path {}.", path);
+        }
+    }
+
 
     /**
      * Tries to sync the temp file with the remote S3 path.

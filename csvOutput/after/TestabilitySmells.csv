@@ -1,0 +1,6 @@
+Project Name,Package Name,Type Name,Testability Smell,Cause of the Smell
+s3fs-nio,org.carlspring.cloud.storage.s3fs,S3AwsRegionProviderChain.Builder,Global State,The tool detected the smell in this class because the class can be accessed as a `global` state.
+s3fs-nio,org.carlspring.cloud.storage.s3fs,S3FileSystemProvider,Excessive Dependency,The tool detected the smell in this class because the class depends on too many dependencies. The total number of dependencies is: 10
+s3fs-nio,org.carlspring.cloud.storage.s3fs,S3OutputStream.StreamAlreadyClosedException,Global State,The tool detected the smell in this class because the class can be accessed as a `global` state.
+s3fs-nio,org.carlspring.cloud.storage.s3fs.util,S3ClientMock.S3Element,Global State,The tool detected the smell in this class because the class can be accessed as a `global` state.
+s3fs-nio,org.carlspring.cloud.storage.s3fs.path,ToURLIT.Entry,Global State,The tool detected the smell in this class because the class can be accessed as a `global` state.

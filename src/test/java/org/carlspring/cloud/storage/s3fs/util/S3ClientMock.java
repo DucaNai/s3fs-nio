@@ -268,10 +268,10 @@ public class S3ClientMock
     }
 
     @Override
-    public CompleteMultipartUploadResponse completeMultipartUpload(final CompleteMultipartUploadRequest completeMultipartUploadRequest)
+    public CompleteMultipartUploadResponse completeMultipartUpload(final CompleteMultipartUploadRequest completeRequest)
             throws AwsServiceException, SdkClientException
     {
-        if (StringUtils.equals(uploadId, completeMultipartUploadRequest.uploadId()))
+        if (StringUtils.equals(uploadId, completeRequest.uploadId()))
         {
             uploadId = null;
         }

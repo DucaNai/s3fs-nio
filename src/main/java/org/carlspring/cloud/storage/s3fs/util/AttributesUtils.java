@@ -6,62 +6,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Utilities to help transforming BasicFileAttributes to Map
+ * Utilities for transforming BasicFileAttributes to Map.
  */
-public abstract class AttributesUtils
-{
-
+public abstract class AttributesUtils {
 
     /**
-     * Given a BasicFileAttributes not null then return a Map
-     * with the keys as the fields of the BasicFileAttributes or PosixFileAttributes and the values
-     * with the content of the fields
+     * Converts BasicFileAttributes to a Map with all attributes.
      *
-     * @param attr BasicFileAttributes
-     * @return Map String Object never null
+     * @param attr BasicFileAttributes to transform
+     * @return Map with attributes as key-value pairs
      */
-    public static Map<String, Object> fileAttributeToMap(BasicFileAttributes attr)
-    {
-        Map<String, Object> result = new HashMap<>();
-        result.put("creationTime", attr.creationTime());
-        result.put("fileKey", attr.fileKey());
-        result.put("isDirectory", attr.isDirectory());
-        result.put("isOther", attr.isOther());
-        result.put("isRegularFile", attr.isRegularFile());
-        result.put("isSymbolicLink", attr.isSymbolicLink());
-        result.put("lastAccessTime", attr.lastAccessTime());
-        result.put("lastModifiedTime", attr.lastModifiedTime());
-        result.put("size", attr.size());
-
-        if (attr instanceof PosixFileAttributes)
-        {
-            PosixFileAttributes posixAttr = (PosixFileAttributes) attr;
-            result.put("permissions", posixAttr.permissions());
-            result.put("owner", posixAttr.owner());
-            result.put("group", posixAttr.group());
-        }
-
-        return result;
+    public static Map<String, Object> fileAttributeToMap(BasicFileAttributes attr) {
+        return fileAttributeToMap(attr, getAllAttributes());
     }
 
     /**
-     * transform the java.nio.file.attribute.BasicFileAttributes to Map filtering by the keys
-     * given in the filters param
+     * Converts BasicFileAttributes to a Map containing specified attributes.
      *
-     * @param attr    BasicFileAttributes not null to tranform to map
-     * @param filters String[] filters
-     * @return Map String Object with the same keys as the filters
+     * @param attr    BasicFileAttributes to transform
+     * @param filters Array of attribute names to include in the map
+     * @return Map with specified attributes as key-value pairs
      */
-    public static Map<String, Object> fileAttributeToMap(BasicFileAttributes attr, String[] filters)
-    {
+    public static Map<String, Object> fileAttributeToMap(BasicFileAttributes attr, String[] filters) {
         Map<String, Object> result = new HashMap<>();
 
-        for (String filter : filters)
-        {
-            filter = filter.replace("basic:", "");
-            filter = filter.replace("posix:", "");
-            switch (filter)
-            {
+        for (String filter : filters) {
+            filter = filter.replace("basic:", "").replace("posix:", "");
+            switch (filter) {
                 case "creationTime":
                     result.put("creationTime", attr.creationTime());
                     break;
@@ -90,13 +61,19 @@ public abstract class AttributesUtils
                     result.put("size", attr.size());
                     break;
                 case "permissions":
-                    result.put("permissions", ((PosixFileAttributes) attr).permissions());
+                    if (attr instanceof PosixFileAttributes) {
+                        result.put("permissions", ((PosixFileAttributes) attr).permissions());
+                    }
                     break;
                 case "group":
-                    result.put("group", ((PosixFileAttributes) attr).group());
+                    if (attr instanceof PosixFileAttributes) {
+                        result.put("group", ((PosixFileAttributes) attr).group());
+                    }
                     break;
                 case "owner":
-                    result.put("owner", ((PosixFileAttributes) attr).owner());
+                    if (attr instanceof PosixFileAttributes) {
+                        result.put("owner", ((PosixFileAttributes) attr).owner());
+                    }
                     break;
             }
         }
@@ -104,4 +81,9 @@ public abstract class AttributesUtils
         return result;
     }
 
+    private static String[] getAllAttributes() {
+        return new String[]{"creationTime", "fileKey", "isDirectory", "isOther", "isRegularFile",
+                "isSymbolicLink", "lastAccessTime", "lastModifiedTime", "size", "permissions",
+                "group", "owner"};
+    }
 }
